@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: sistemas_avaliacao
+  datasource:
+    url: jdbc:mariadb://localhost:3307/sistemas_avaliacao
+    username: seu_user
+    password: sua_senha
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+jwt:
+  secret: sua_secret
+  expiration: 86400000
