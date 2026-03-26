@@ -1,10 +1,12 @@
 package br.com.datanorte.sistemas_avaliacao.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.jspecify.annotations.Nullable;
+import br.com.datanorte.sistemas_avaliacao.enums.Perfil;
+import br.com.datanorte.sistemas_avaliacao.enums.Status;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,10 +32,12 @@ public class Usuario implements UserDetails {
     private String email;
     @Column(nullable = false)
     private String password;
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private char status;
+    private Status status;
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private char perfil;
+    private Perfil perfil;
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -44,19 +48,11 @@ public class Usuario implements UserDetails {
 
     @Override
     public @NonNull Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.perfil == '1') {
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        }
-
-        if (this.perfil == '2') {
-            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
-        }
-
-        return List.of();
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.perfil.name()));
     }
 
     @Override
-    public @Nullable String getPassword() {
+    public  String getPassword() {
         return this.password;
     }
 
@@ -82,7 +78,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.status == '1';
+        return this.status == Status.ATIVO;
     }
 
 }

@@ -1,9 +1,5 @@
-package br.com.datanorte.sistemas_avaliacao.config;
+package br.com.datanorte.sistemas_avaliacao.exception;
 
-import br.com.datanorte.sistemas_avaliacao.exception.ErrorResponse;
-import br.com.datanorte.sistemas_avaliacao.exception.UserInactiveException;
-import br.com.datanorte.sistemas_avaliacao.exception.UserNotLoggedInException;
-import br.com.datanorte.sistemas_avaliacao.exception.UsernameOrPasswordInvalidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,6 +24,12 @@ public class ApplicationConfigAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleUserNotLoggedInException(UserNotLoggedInException ex) {
         return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleGenericException(Exception ex) {
+        return new ErrorResponse("Erro interno no servidor");
     }
 
 

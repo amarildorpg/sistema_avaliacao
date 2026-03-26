@@ -6,7 +6,6 @@ import br.com.datanorte.sistemas_avaliacao.controller.request.UsuarioRequestDTO;
 import br.com.datanorte.sistemas_avaliacao.controller.response.LoginResponse;
 import br.com.datanorte.sistemas_avaliacao.controller.response.UsuarioResponseDTO;
 import br.com.datanorte.sistemas_avaliacao.entity.Usuario;
-import br.com.datanorte.sistemas_avaliacao.exception.ErrorResponse;
 import br.com.datanorte.sistemas_avaliacao.exception.UserInactiveException;
 import br.com.datanorte.sistemas_avaliacao.exception.UsernameOrPasswordInvalidException;
 import br.com.datanorte.sistemas_avaliacao.mapper.UsuarioMapper;
@@ -35,15 +34,10 @@ public class UsuarioController {
     private final TokenConfig tokenService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> save(@Valid @RequestBody UsuarioRequestDTO Request) {
-        try {
-            Usuario savedUser = usuarioservice.save(UsuarioMapper.toEntity(Request));
-            return ResponseEntity.status(HttpStatus.CREATED)
+    public ResponseEntity<UsuarioResponseDTO> save(@Valid @RequestBody UsuarioRequestDTO request) {
+        Usuario savedUser = usuarioservice.save(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
                     .body(UsuarioMapper.toResponse(savedUser));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new ErrorResponse(e.getMessage()));
-        }
     }
 
     @PostMapping("/login")
@@ -57,7 +51,7 @@ public class UsuarioController {
             if (!(principal instanceof Usuario user)) {
                 throw new UsernameOrPasswordInvalidException("Usuário ou senha inválidos.");
             }
-            String token = tokenService.generateToken(Objects.requireNonNull(user));
+            String token = tokenService.generateToken(user);
             return ResponseEntity.ok(new LoginResponse(token));
         } catch (DisabledException e) {
             throw new UserInactiveException("Usuário inativo.");

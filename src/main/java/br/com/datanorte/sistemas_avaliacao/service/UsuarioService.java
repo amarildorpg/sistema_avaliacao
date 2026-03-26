@@ -2,6 +2,9 @@ package br.com.datanorte.sistemas_avaliacao.service;
 
 import br.com.datanorte.sistemas_avaliacao.controller.request.UsuarioRequestDTO;
 import br.com.datanorte.sistemas_avaliacao.entity.Usuario;
+import br.com.datanorte.sistemas_avaliacao.enums.Status;
+import br.com.datanorte.sistemas_avaliacao.exception.UsernameOrPasswordInvalidException;
+import br.com.datanorte.sistemas_avaliacao.mapper.UsuarioMapper;
 import br.com.datanorte.sistemas_avaliacao.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,25 +18,22 @@ import java.util.Optional;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
-    public Usuario save(Usuario usuario) {
+    public Usuario save(UsuarioRequestDTO dto) {
 
-        String email = usuario.getEmail().trim().toLowerCase();
+        String email = dto.email().trim().toLowerCase();
 
         if (usuarioRepository.findByEmail(email).isPresent()) {
-            throw new RuntimeException("Já existe usuário com esse email");
+            throw new UsernameOrPasswordInvalidException();
         }
-
+        Usuario usuario = UsuarioMapper.toEntity(dto);
         usuario.setEmail(email);
-
-        String senhaCriptografada = passwordEncoder.encode(usuario.getPassword());
-        usuario.setPassword(senhaCriptografada);
-
+        usuario.setPassword(passwordEncoder.encode(dto.password()));
         return usuarioRepository.save(usuario);
     }
 
     public boolean delete(Long id) {
         return usuarioRepository.findById(id).map(usuario -> {
-            usuario.setStatus('0');
+            usuario.setStatus(Status.INATIVO);
             usuarioRepository.save(usuario);
             return true;
         }).orElse(false);

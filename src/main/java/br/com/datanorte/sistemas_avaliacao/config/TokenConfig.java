@@ -15,6 +15,9 @@ import java.util.Optional;
 public class TokenConfig {
     @Value("${jwt.secret}")
     private String secret;
+    @Value("${jwt.expiration}")
+    private long expiration;
+
 
     public String generateToken(Usuario usuario) {
         Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -22,7 +25,7 @@ public class TokenConfig {
                 .withSubject(usuario.getEmail())
                 .withClaim("userID", usuario.getId())
                 .withClaim("name", usuario.getName())
-                .withExpiresAt(Instant.now().plusSeconds(86400))
+                .withExpiresAt(Instant.now().plusSeconds(expiration))
                 .withIssuer("sistemas_avaliacao")
                 .sign(algorithm);
     }

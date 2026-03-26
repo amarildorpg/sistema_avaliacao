@@ -47,7 +47,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                         .orElse(null);
 
                 // 🚨 VALIDA STATUS
-                if (usuario == null || usuario.getStatus() != '1') {
+                if (usuario == null || !usuario.isEnabled()) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().write("Usuário inativo");
                     return;
