@@ -1,9 +1,9 @@
 package br.com.datanorte.sistemas_avaliacao.config;
 
-import br.com.datanorte.sistemas_avaliacao.exeption.ErrorResponse;
-import br.com.datanorte.sistemas_avaliacao.exeption.UserInactiveException;
-import br.com.datanorte.sistemas_avaliacao.exeption.UserNotLoggedInException;
-import br.com.datanorte.sistemas_avaliacao.exeption.UsernameOrPasswordInvalidException;
+import br.com.datanorte.sistemas_avaliacao.exception.ErrorResponse;
+import br.com.datanorte.sistemas_avaliacao.exception.UserInactiveException;
+import br.com.datanorte.sistemas_avaliacao.exception.UserNotLoggedInException;
+import br.com.datanorte.sistemas_avaliacao.exception.UsernameOrPasswordInvalidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
