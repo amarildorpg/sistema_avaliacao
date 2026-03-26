@@ -30,6 +30,8 @@ br.com.datanorte.sistemas_avaliacao
 │   └── TokenConfig.java
 ├── controller
 │   ├── request
+│   │   ├── RedefinirSenhaRequest
+│   │   ├── RecuperarSenhaRequest.java
 │   │   ├── LoginRequest.java
 │   │   └── UsuarioRequestDTO.java
 │   ├── response
@@ -37,9 +39,11 @@ br.com.datanorte.sistemas_avaliacao
 │   │   └── UsuarioResponseDTO.java
 │   └── UsuarioController.java
 ├── entity
+│   ├── UsuarioToken.java
 │   └── Usuario.java
 ├── enums
 │   ├── Perfil.java
+│   ├── TokenTipo.java
 │   └── Status.java
 ├── exception
 │   ├── ErrorResponse.java
@@ -49,9 +53,11 @@ br.com.datanorte.sistemas_avaliacao
 ├── mapper
 │   └── UsuarioMapper.java
 ├── repository
+│   ├── UsuarioTokenRepository.java
 │   └── UsuarioRepository.java
 └── service
     ├── AuthorizationService.java
+    ├── EmailService.java
     └── UsuarioService.java
 ```
 
@@ -78,14 +84,35 @@ Configure as seguintes variáveis antes de rodar a aplicação:
 
 ```yaml
 spring:
+  application:
+    name: sistemas_avaliacao
   datasource:
     url: jdbc:mariadb://localhost:3307/sistemas_avaliacao
-    username: root
-    password: ${DB_PASSWORD}
+    username: usuario
+    password: senha
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: seu email
+    password: sua senha gerada
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 jwt:
-  secret: ${JWT_SECRET}
-  expiration: 86400
+  secret: sua_secret
+  expiration: 86400000
 ```
 
 ---
@@ -94,10 +121,13 @@ jwt:
 
 ### 🔓 Públicos (sem autenticação)
 
-| Método | Rota | Descrição |
-|---|---|---|
-| `POST` | `/datanorte/users/register` | Cadastro de novo usuário |
-| `POST` | `/datanorte/users/login` | Login e geração do token JWT |
+| Método | Rota                                      | Descrição |
+|---|-------------------------------------------|---|
+| `POST` | `/datanorte/users/register`               | Cadastro de novo usuário(envia email de ativação) |
+| `GET` | `/datanorte/users/activate?token=<token>` | Ativa conta via token recebido por email |
+| `POST` | `/datanorte/users/login`                  | Login e geração do token JWT |
+| `POST` | `/datanorte/users/recover-password`       | Solicita recuperação de senha (envia email com token) |
+| `POST` | `/datanorte/users/reset-password`         | Reseta senha usando token enviado por email |
 
 ### 🔒 Protegidos (requer token JWT)
 
@@ -122,7 +152,38 @@ A API utiliza autenticação **JWT Bearer Token**.
 Authorization: Bearer <seu-token>
 ```
 
+## ✉️ Ativação de Conta por Email
+
+- Ao se cadastrar, o usuário recebe um email com um link de ativação.
+- O link tem a forma:
+```
+GET /datanorte/users/activate?token=<token>
+```
+- O token expira em algumas horas (configurável).
+- Somente usuários ativados podem entrar no sistema.
+
 ---
+
+## 🔑 Recuperação de Senha
+
+1. Usuário solicita recuperação de senha:
+```json
+POST /datanorte/users/recover-password
+{
+  "email": "usuario@email.com"
+}
+```
+2. Um token único é enviado para o email do usuário.
+3. Usuário reseta a senha usando o token:
+```json
+POST /datanorte/users/reset-password
+{
+  "token": "<token_recebido>",
+  "novaSenha": "senha123"
+}
+```
+- O token expira em 2 horas.
+- Após reset, o token é invalidado.
 
 ## 👤 Perfis de Usuário
 

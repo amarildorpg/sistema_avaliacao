@@ -3,10 +3,9 @@ spring:
     name: sistemas_avaliacao
   datasource:
     url: jdbc:mariadb://localhost:3307/sistemas_avaliacao
-    username: seu_user
-    password: sua_senha
+    username: usuario
+    password: senha
     driver-class-name: org.mariadb.jdbc.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,6 +13,17 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: seu email
+    password: sua senha gerada
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 jwt:
   secret: sua_secret

@@ -20,6 +20,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import br.com.datanorte.sistemas_avaliacao.controller.request.RecuperarSenhaRequest;
+import br.com.datanorte.sistemas_avaliacao.controller.request.RedefinirSenhaRequest;
 
 
 import java.util.List;
@@ -97,6 +99,36 @@ public class UsuarioController {
 
         return ResponseEntity.noContent()
                 .build();
+    }
+
+    @GetMapping("/ativar")
+    public ResponseEntity<String> ativarConta(@RequestParam String token) {
+        boolean ativado = usuarioservice.ativarConta(token);
+
+        if (!ativado) {
+            return ResponseEntity.badRequest()
+                    .body("Token inválido ou expirado.");
+        }
+
+        return ResponseEntity.ok("Conta ativada com sucesso!");
+    }
+
+    @PostMapping("/recuperar-senha")
+    public ResponseEntity<String> recuperarSenha(@RequestBody RecuperarSenhaRequest request) {
+        usuarioservice.solicitarRecuperacaoSenha(request.email());
+        return ResponseEntity.ok("Se o e-mail estiver cadastrado, você receberá as instruções em breve.");
+    }
+
+    @PostMapping("/redefinir-senha")
+    public ResponseEntity<String> redefinirSenha(@RequestBody RedefinirSenhaRequest request) {
+        boolean redefinido = usuarioservice.redefinirSenha(request.token(), request.novaSenha());
+
+        if (!redefinido) {
+            return ResponseEntity.badRequest()
+                    .body("Token inválido ou expirado.");
+        }
+
+        return ResponseEntity.ok("Senha redefinida com sucesso!");
     }
 
 }

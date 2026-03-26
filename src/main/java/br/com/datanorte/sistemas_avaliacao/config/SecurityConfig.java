@@ -45,6 +45,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,
                                 "/datanorte/users/login")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/datanorte/users/ativar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/datanorte/users/recuperar-senha").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/datanorte/users/redefinir-senha").permitAll()
                         .anyRequest()
                         .authenticated()
                 )
