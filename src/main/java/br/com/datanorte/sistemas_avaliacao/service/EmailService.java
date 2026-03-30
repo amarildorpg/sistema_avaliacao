@@ -12,7 +12,7 @@ public class EmailService {
     private final JavaMailSender mailSender;
 
     public void enviarAtivacao(String destinatario, String token) {
-        String link = "http://localhost:8080/datanorte/users/ativar?token=" + token;
+        String link = "http://localhost:8080/users/ativar?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(destinatario);
@@ -33,7 +33,7 @@ public class EmailService {
     }
 
     public void enviarRecuperacaoSenha(String destinatario, String token) {
-        String link = "http://localhost:8080/datanorte/users/recuperar-senha?token=" + token;
+        String link = "http://localhost:8080/users/recuperar-senha?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(destinatario);

@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/datanorte/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UsuarioController {
     private final UsuarioService usuarioservice;
