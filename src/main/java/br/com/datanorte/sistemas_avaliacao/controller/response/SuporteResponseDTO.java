@@ -3,11 +3,13 @@ package br.com.datanorte.sistemas_avaliacao.controller.response;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 public record SuporteResponseDTO (
     Long id,
     String nome,
     LocalDateTime dataCriacao,
-    LocalDateTime dataEdicao
+    LocalDateTime dataEdicao,
+    List<SuporteTreinamentoResponseDTO> treinamentos
 ){}

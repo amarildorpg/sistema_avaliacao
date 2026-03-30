@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "suporte")
@@ -28,6 +29,9 @@ public class Suporte {
 
     @Column(name = "updated_at")
     private LocalDateTime dataEdicao;
+
+    @OneToMany(mappedBy = "suporte", fetch = FetchType.LAZY)
+    private List<SuporteTreinamento> treinamentos;
 
     @PrePersist
     protected void onCreate() {
